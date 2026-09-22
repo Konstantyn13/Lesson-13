@@ -1,0 +1,457 @@
+/* ======================================================================
+   1. ЗМІННІ ТА БАЗОВІ НАЛАШТУВАННЯ
+   Палітра побудована навколо теми "асфальт вночі + бортовий комп'ютер":
+   темне графітове тло, жовтий акцент (як стрілка тахометра),
+   приглушений червоний для попереджень/акцентів другого рівня.
+====================================================================== */
+:root{
+  --bg:            #14161a;   /* асфальт / фон сторінки */
+  --panel:         #1c1f25;   /* панелі, картки */
+  --panel-light:   #23272f;   /* трохи світліша панель для hover */
+  --line:          #2d323b;   /* тонкі роздільники */
+  --text:          #eceef0;   /* основний текст */
+  --text-dim:      #8b909a;   /* другорядний текст */
+  --accent:        #f2c43d;   /* жовтий — акцент, стрілка приладу */
+  --accent-dim:    #b3922c;
+  --danger:        #e8543e;   /* червоний — редлайн / попередження */
+  --radius:        4px;
+  --maxw:          1100px;
+  --ease:          cubic-bezier(.22,.61,.36,1);
+}
+
+*, *::before, *::after{ box-sizing: border-box; }
+
+html{
+  scroll-behavior: smooth;
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* легка текстура асфальту через повторюваний градієнт-шум */
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(242,196,61,0.04), transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(232,84,62,0.03), transparent 45%);
+}
+
+h1, h2, h3, .num{
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+p{ color: var(--text-dim); max-width: 62ch; }
+
+a{ color: inherit; }
+
+.wrap{
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* Тонка діагональна "відрізана" вершина/низ панелей —
+   замінює типовий border-radius-на-всьому, дає відчуття приладу */
+.cut-corner{
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+}
+
+/* ======================================================================
+   2. НАВІГАЦІЯ / ШАПКА
+====================================================================== */
+header.nav{
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 50;
+  background: rgba(20,22,26,0.85);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-inner{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+
+.logo{
+  display:flex; align-items:center; gap:8px;
+  font-family:'Rajdhani', sans-serif;
+  font-size: 22px; font-weight:700;
+}
+.logo .dot{ width:8px; height:8px; background: var(--accent); border-radius:50%; }
+
+.nav-links{
+  display:flex; gap: 28px; list-style:none; margin:0; padding:0;
+}
+.nav-links a{
+  text-decoration:none; color: var(--text-dim); font-size:15px;
+  transition: color .2s var(--ease);
+}
+.nav-links a:hover{ color: var(--accent); }
+
+/* ======================================================================
+   3. ВСТУПНИЙ (HERO) БЛОК
+   Асиметричний layout на Flexbox: зліва — заголовок і опис,
+   справа — великий "спідометр" з анімованим числом,
+   який одразу задає тему сайту.
+====================================================================== */
+.hero{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 48px;
+  padding: 96px 32px 80px;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  min-height: 82vh;
+}
+
+.hero-text{ flex: 1 1 420px; }
+
+.hero-eyebrow{
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.hero-text h1{
+  font-size: clamp(40px, 6vw, 68px);
+  line-height: 1.05;
+  margin-bottom: 22px;
+}
+
+.hero-text h1 span{ color: var(--accent); }
+
+.hero-text p{ font-size: 17px; margin-bottom: 32px; }
+
+.btn{
+  display:inline-flex; align-items:center; gap:10px;
+  padding: 14px 26px;
+  background: var(--accent);
+  color: #14161a;
+  font-weight: 600;
+  font-family:'Rajdhani', sans-serif;
+  font-size: 16px;
+  text-decoration:none;
+  border: none;
+  cursor:pointer;
+  border-radius: var(--radius);
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), background .25s var(--ease);
+}
+.btn:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -8px rgba(242,196,61,0.45);
+  background: #ffd65c;
+}
+.btn:active{ transform: translateY(-1px); }
+
+/* --- Панель-спідометр у hero --- */
+.hero-gauge{
+  flex: 1 1 300px;
+  display:flex; justify-content:center;
+}
+
+.gauge{
+  position:relative;
+  width: 300px; height: 300px;
+}
+
+.gauge svg{ width:100%; height:100%; transform: rotate(-90deg); }
+
+.gauge-track{ fill:none; stroke: var(--line); stroke-width: 10; }
+.gauge-fill{
+  fill:none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round;
+  stroke-dasharray: 690; /* довжина кола для анімації заповнення */
+  stroke-dashoffset: 690;
+  transition: stroke-dashoffset 1.6s var(--ease);
+}
+
+.gauge-center{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.gauge-center .num{ font-size: 56px; color: var(--text); }
+.gauge-center .unit{ color: var(--text-dim); font-size: 14px; }
+
+/* ======================================================================
+   4. ЛОГІКА ПОЯВИ БЛОКІВ ПРИ СКРОЛІ
+   Клас .reveal — початковий стан (прихований, зсунутий вниз),
+   клас .is-visible додається через IntersectionObserver у JS.
+====================================================================== */
+.reveal{
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+}
+.reveal.is-visible{
+  opacity: 1;
+  transform: translateY(0);
+}
+/* Пошарова затримка для елементів усередині секції (карток) */
+.reveal .stagger > *{
+  opacity:0; transform: translateY(24px);
+  transition: opacity .6s var(--ease), transform .6s var(--ease);
+}
+.reveal.is-visible .stagger > *{ opacity:1; transform: translateY(0); }
+.reveal.is-visible .stagger > *:nth-child(1){ transition-delay: .05s; }
+.reveal.is-visible .stagger > *:nth-child(2){ transition-delay: .15s; }
+.reveal.is-visible .stagger > *:nth-child(3){ transition-delay: .25s; }
+.reveal.is-visible .stagger > *:nth-child(4){ transition-delay: .35s; }
+
+@media (prefers-reduced-motion: reduce){
+  .reveal, .reveal .stagger > *{ transition: none !important; opacity:1 !important; transform:none !important; }
+  html{ scroll-behavior: auto; }
+}
+
+/* ======================================================================
+   5. СЕКЦІЯ "СТАТИСТИКА"
+   Панель приладів: 4 блоки в ряд (Flexbox, wrap на малих екранах).
+   Кожен блок — "прилад" зі своєю міні-шкалою прогресу.
+====================================================================== */
+section{ padding: 90px 0; }
+
+.section-head{
+  max-width: var(--maxw);
+  margin: 0 auto 48px;
+  padding: 0 32px;
+  display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+  flex-wrap: wrap;
+}
+.section-head h2{ font-size: clamp(28px, 4vw, 40px); }
+.section-head p{ margin:0; }
+
+.stats-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap: 20px;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.stat-card{
+  flex: 1 1 240px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 28px 26px;
+  position: relative;
+  overflow:hidden;
+  transition: transform .35s var(--ease), border-color .35s var(--ease), background .35s var(--ease);
+}
+
+/* тонка жовта риска зліва, що "виїжджає" при наведенні — 
+   натяк на індикатор повороту / активний прилад */
+.stat-card::before{
+  content:"";
+  position:absolute; left:0; top:0; bottom:0; width:3px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform .35s var(--ease);
+}
+
+.stat-card:hover{
+  transform: translateY(-6px);
+  background: var(--panel-light);
+  border-color: var(--accent-dim);
+}
+.stat-card:hover::before{ transform: scaleY(1); }
+
+.stat-card .icon{ font-size: 26px; margin-bottom: 18px; display:block; }
+
+.stat-card .num{
+  font-size: 42px;
+  color: var(--accent);
+  display:flex; align-items:baseline; gap:6px;
+}
+.stat-card .num .unit{ font-size: 16px; color: var(--text-dim); font-family:'Inter',sans-serif; font-weight:500; }
+
+.stat-card h3{
+  font-size: 17px;
+  font-family:'Inter', sans-serif;
+  font-weight:600;
+  margin: 10px 0 6px;
+  color: var(--text);
+}
+.stat-card p{ font-size: 14px; margin:0; }
+
+/* міні-шкала прогресу під кожним показником */
+.bar{
+  margin-top: 18px;
+  height: 6px;
+  background: var(--line);
+  border-radius: 3px;
+  overflow:hidden;
+}
+.bar-fill{
+  height:100%;
+  background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+  width: 0%;
+  transition: width 1.4s var(--ease);
+  border-radius: 3px;
+}
+
+/* ======================================================================
+   6. СЕКЦІЯ "НАДІЙНІСТЬ / РЕМОНТООРІЄНТОВАНІСТЬ"
+   Горизонтальний список причин ремонту з Flexbox,
+   кожен рядок — власний hover-ефект зсуву.
+====================================================================== */
+.repair-list{
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 32px;
+  display:flex; flex-direction:column; gap:1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.repair-row{
+  display:flex; align-items:center; gap: 20px;
+  background: var(--panel);
+  padding: 18px 24px;
+  transition: background .25s var(--ease), padding-left .25s var(--ease);
+}
+.repair-row:hover{
+  background: var(--panel-light);
+  padding-left: 34px;
+}
+
+.repair-row .label{ flex: 1 1 220px; font-weight:600; }
+.repair-row .track{
+  flex: 3 1 300px;
+  height: 8px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow:hidden;
+}
+.repair-row .track-fill{
+  height:100%; width:0%;
+  background: var(--danger);
+  transition: width 1.2s var(--ease);
+  border-radius:4px;
+}
+.repair-row .pct{
+  flex: 0 0 52px;
+  text-align:right;
+  font-family:'Rajdhani',sans-serif;
+  font-weight:700;
+  color: var(--text-dim);
+}
+
+/* ======================================================================
+   7. СЕКЦІЯ ГРИ
+   "Екран бортового комп'ютера": темна консоль з canvas усередині.
+====================================================================== */
+.game-section{
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.game-wrap{
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 32px;
+  display:flex; flex-wrap:wrap; gap:40px; align-items:center;
+}
+
+.game-info{ flex: 1 1 280px; }
+.game-info ul{ padding-left: 18px; color: var(--text-dim); font-size:14px; }
+.game-info li{ margin-bottom:6px; }
+
+.console{
+  flex: 1 1 360px;
+  background: #0e1013;
+  border: 1px solid var(--line);
+  padding: 14px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.console-topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 10px;
+  font-family:'Rajdhani',sans-serif; font-weight:600; font-size:14px;
+  color: var(--text-dim);
+}
+.console-topbar .score{ color: var(--accent); }
+
+#gameCanvas{
+  display:block;
+  width: 100%;
+  background:
+    repeating-linear-gradient(180deg, #1a1c20 0 40px, #17191d 40px 80px);
+  border: 1px solid var(--line);
+  touch-action: none;
+  cursor: pointer;
+}
+
+.console-controls{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top: 10px;
+}
+.console-controls .hint{ font-size:12px; color: var(--text-dim); }
+
+.mini-btn{
+  background: transparent;
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  font-family:'Rajdhani',sans-serif;
+  font-weight:600;
+  padding: 8px 16px;
+  cursor:pointer;
+  border-radius: var(--radius);
+  transition: background .2s var(--ease), color .2s var(--ease);
+}
+.mini-btn:hover{ background: var(--accent); color:#14161a; }
+
+/* мобільні кнопки керування (з'являються тільки на дотикових екранах) */
+.touch-controls{
+  display:none;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+.touch-controls button{
+  width: 56px; height: 44px;
+  background: var(--panel-light);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-size: 18px;
+  border-radius: var(--radius);
+}
+@media (pointer: coarse){
+  .touch-controls{ display:flex; }
+}
+
+/* ======================================================================
+   8. ФУТЕР
+====================================================================== */
+footer{
+  padding: 40px 32px calc(40px + env(safe-area-inset-bottom, 0px));
+  text-align:center;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+/* ======================================================================
+   9. АДАПТИВНІСТЬ
+====================================================================== */
+@media (max-width: 640px){
+  .nav-links{ display:none; } /* спрощення шапки на телефонах */
+  .hero{ padding-top: 64px; text-align:left; }
+  section{ padding: 64px 0; }
+}

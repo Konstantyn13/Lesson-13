@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AutoStat — статистика на дорозі</title>
+
+<!-- ====================================================================
+     ШРИФТИ
+     Rajdhani — технічний, "приладовий" шрифт для заголовків і цифр
+     Inter — нейтральний шрифт для основного тексту
+==================================================================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- =========================================================
+     ШАПКА САЙТУ
+========================================================== -->
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo"><span class="dot"></span>AutoStat</div>
+    <ul class="nav-links">
+      <li><a href="#stats">Статистика</a></li>
+      <li><a href="#reliability">Надійність</a></li>
+      <li><a href="#game">Гра</a></li>
+    </ul>
+  </div>
+</header>
+
+<!-- =========================================================
+     1. ВСТУПНИЙ БЛОК (HERO)
+========================================================== -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Дані з бортового комп'ютера тисяч авто</div>
+    <h1>Скільки насправді<br>коштує <span>дорога</span></h1>
+    <p>
+      Ми зібрали дані про швидкість, тривалість поїздок та частоту ремонтів
+      сучасних автомобілів, щоб показати, що відбувається під капотом
+      статистики руху — і на що варто зважати, обираючи авто.
+    </p>
+    <a href="#stats" class="btn">Дивитись статистику ↓</a>
+  </div>
+
+  <!-- Анімований "спідометр" — головний візуальний акцент hero-блоку -->
+  <div class="hero-gauge">
+    <div class="gauge" id="heroGauge">
+      <svg viewBox="0 0 240 240">
+        <circle class="gauge-track" cx="120" cy="120" r="110"></circle>
+        <circle class="gauge-fill" cx="120" cy="120" r="110" id="gaugeFill"></circle>
+      </svg>
+      <div class="gauge-center">
+        <span class="num" id="gaugeNum">0</span>
+        <span class="unit">км/год середня швидкість у місті</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     2. СТАТИСТИКА АВТОМОБІЛІВ
+========================================================== -->
+<section id="stats">
+  <div class="section-head reveal">
+    <div>
+      <h2>Автомобілі в цифрах</h2>
+      <p>Середні показники за даними телеметрії легкових авто за останній рік.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid reveal">
+    <div class="stagger" style="display:contents">
+      <div class="stat-card">
+        <span class="icon">🚗</span>
+        <div class="num" data-count="52"><span class="value">0</span><span class="unit">км/год</span></div>
+        <h3>Середня швидкість</h3>
+        <p>У щільному міському трафіку більшість поїздок проходить на цій швидкості.</p>
+        <div class="bar"><div class="bar-fill" data-width="52"></div></div>
+      </div>
+
+      <div class="stat-card">
+        <span class="icon">⏱️</span>
+        <div class="num" data-count="27"><span class="value">0</span><span class="unit">хв</span></div>
+        <h3>Тривалість поїздки</h3>
+        <p>Медіанний час однієї поїздки від точки А до точки Б у межах міста.</p>
+        <div class="bar"><div class="bar-fill" data-width="45"></div></div>
+      </div>
+
+      <div class="stat-card">
+        <span class="icon">🔧</span>
+        <div class="num" data-count="3.2"><span class="value">0</span><span class="unit">рази/рік</span></div>
+        <h3>Частота ремонтів</h3>
+        <p>Скільки разів у середньому авто потрапляє на СТО протягом року.</p>
+        <div class="bar"><div class="bar-fill" data-width="38"></div></div>
+      </div>
+
+      <div class="stat-card">
+        <span class="icon">⛽</span>
+        <div class="num" data-count="7.4"><span class="value">0</span><span class="unit">л/100км</span></div>
+        <h3>Витрата палива</h3>
+        <p>Середня витрата пального у змішаному циклі міста та траси.</p>
+        <div class="bar"><div class="bar-fill" data-width="60"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     3. НАДІЙНІСТЬ / РЕМОНТООРІЄНТОВАНІСТЬ
+========================================================== -->
+<section id="reliability">
+  <div class="section-head reveal">
+    <div>
+      <h2>Що найчастіше ламається</h2>
+      <p>Розподіл звернень на СТО за типом несправності.</p>
+    </div>
+  </div>
+
+  <div class="repair-list reveal">
+    <div class="repair-row">
+      <span class="label">Гальмівна система</span>
+      <div class="track"><div class="track-fill" data-width="34"></div></div>
+      <span class="pct">34%</span>
+    </div>
+    <div class="repair-row">
+      <span class="label">Підвіска та ходова</span>
+      <div class="track"><div class="track-fill" data-width="27"></div></div>
+      <span class="pct">27%</span>
+    </div>
+    <div class="repair-row">
+      <span class="label">Електроніка / датчики</span>
+      <div class="track"><div class="track-fill" data-width="21"></div></div>
+      <span class="pct">21%</span>
+    </div>
+    <div class="repair-row">
+      <span class="label">Двигун і трансмісія</span>
+      <div class="track"><div class="track-fill" data-width="12"></div></div>
+      <span class="pct">12%</span>
+    </div>
+    <div class="repair-row">
+      <span class="label">Кузов і скло</span>
+      <div class="track"><div class="track-fill" data-width="6"></div></div>
+      <span class="pct">6%</span>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     4. ІНТЕРАКТИВНА 2D ГРА
+     Проста гра "уникай перешкод": авто керується стрілками
+     вліво/вправо, зустрічні машини їдуть згори вниз.
+========================================================== -->
+<section id="game" class="game-section">
+  <div class="section-head reveal">
+    <div>
+      <h2>Перевір реакцію за кермом</h2>
+      <p>Міні-гра на бортовому екрані: уникай зустрічних авто якомога довше.</p>
+    </div>
+  </div>
+
+  <div class="game-wrap reveal">
+    <div class="game-info">
+      <h3 style="font-family:'Inter',sans-serif;font-size:17px;margin-bottom:10px;">Як грати</h3>
+      <ul>
+        <li>← → або A / D — перестрибнути у сусідню смугу</li>
+        <li>На телефоні — торкайся кнопок під екраном</li>
+        <li>Кожна секунда без зіткнення додає очки</li>
+        <li>Швидкість трафіку поступово зростає</li>
+      </ul>
+    </div>
+
+    <div class="console">
+      <div class="console-topbar">
+        <span>BOARD COMPUTER — TRACK MODE</span>
+        <span class="score">Очки: <span id="scoreVal">0</span></span>
+      </div>
+
+      <canvas id="gameCanvas" width="300" height="420"></canvas>
+
+      <div class="console-controls">
+        <span class="hint" id="gameHint">Натисни на екран, щоб почати</span>
+        <button class="mini-btn" id="restartBtn">Рестарт</button>
+      </div>
+
+      <!-- Кнопки для мобільних пристроїв -->
+      <div class="touch-controls">
+        <button id="btnLeft">←</button>
+        <button id="btnRight">→</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  AutoStat · демонстраційний проєкт, дані наведені як приклад
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
